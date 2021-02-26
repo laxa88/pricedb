@@ -1,4 +1,4 @@
-package com.example.pricedb
+package com.laksapedia.pricedb
 
 import org.junit.Test
 

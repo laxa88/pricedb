@@ -1,4 +1,4 @@
-package com.example.pricedb
+package com.laksapedia.pricedb
 
 import android.content.Intent
 import android.net.Uri
