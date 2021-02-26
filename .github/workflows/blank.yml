@@ -41,7 +41,7 @@ jobs:
         uses: sparkfabrik/android-build-action@v1.0.0
         with:
           # Project path
-          project-path: android
+          project-path: # default root, where gradlew file is
           # Output path of apk
           output-path: # optional, default is output.apk
           # Name of the gradle task to exec
