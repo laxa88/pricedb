@@ -68,3 +68,13 @@ jobs:
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           # The password for the key
           keyPassword: ${{ secrets.KEY_PASSWORD }} # optional
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: app/build/outputs/apk/release/output.apk
+          asset_name: # $tag
+          tag: # ${{ github.ref }}
+          overwrite: true
+          body: release-$tag
