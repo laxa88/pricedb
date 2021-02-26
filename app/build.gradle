@@ -1,11 +1,17 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-android-extensions'
+}
+
+repositories {
+    jcenter()
 }
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.3"
+    // buildToolsVersion "30.0.3"
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId "com.example.pricedb"
@@ -42,4 +48,8 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    implementation('com.journeyapps:zxing-android-embedded:4.1.0') { transitive = false }
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'com.google.zxing:core:3.3.0'
 }
