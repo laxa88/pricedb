@@ -1,6 +1,7 @@
 package com.example.pricedb
 
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
@@ -22,10 +23,18 @@ class MainActivity : AppCompatActivity() {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
 
         if (result != null) {
-            if (result.getContents() == null) {
+            if (result.contents == null) {
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Scanned: ${result.formatName}, ${result.contents}", Toast.LENGTH_LONG).show();
+
+                result.contents.let {
+                    if (Regex("^(http|https)://").containsMatchIn(it)) {
+                        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(it))
+                        startActivity(browserIntent)
+                    }
+                }
+
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
