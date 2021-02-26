@@ -75,6 +75,6 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: app/build/outputs/apk/release/app-release-unsigned-signed.apk
           asset_name: release.apk
-          tag: $GITHUB_RUN_ID
+          tag: ${GITHUB_REF:10}
           overwrite: true
           body: # static text only
