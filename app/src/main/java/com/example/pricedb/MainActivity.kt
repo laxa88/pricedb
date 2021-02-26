@@ -34,7 +34,6 @@ class MainActivity : AppCompatActivity() {
                         startActivity(browserIntent)
                     }
                 }
-
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
