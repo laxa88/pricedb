@@ -52,9 +52,9 @@ jobs:
       #   run: |
       #     sh scripts/version.sh
 
-      # the `.bak` is a OSX-specific fix, but output is unused
+      # Note: add '.bak' after -i for OSX-specific fix
       - name: Update gradle version
-        run: sed -i '.bak' "s/versionName .*/versionName ${{ steps.upc_version_tag.outputs.UPC_VERSION }}/g" app/build.gradle
+        run: sed -i "s/versionName .*/versionName ${{ steps.upc_version_tag.outputs.UPC_VERSION }}/g" app/build.gradle
 
       - name: Build Android release
         # You may pin to the exact commit or the version.
