@@ -43,7 +43,7 @@ jobs:
           # Project path
           project-path: ./ # default root, where gradlew file is
           # Output path of apk
-          output-path: release-unsigned.apk # optional, default is app/build/outputs/apk/release/app-release-unsigned.apk
+          output-path: # optional, default is app/build/outputs/apk/release/app-release-unsigned.apk
           # Name of the gradle task to exec
           gradle-task: assembleRelease # optional, default is assembleDebug
           # Boolean to tell the Action to upload the .ipa to Browserstack App Live after the build.
