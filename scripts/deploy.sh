@@ -19,4 +19,4 @@
 # $foo = "s/versionCode ./versionCode 222/g"
 # bar="wow"
 
-sed -i '.bak' 's/versionCode .*/versionCode v0.0.7/g' $1
+sed -i '.bak' 's/versionName .*/versionName "v0.0.7"/g' $1
