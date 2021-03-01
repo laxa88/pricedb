@@ -39,10 +39,22 @@ jobs:
           echo Add other actions to build,
           echo test, and deploy your project.
 
-      - name: Extract build version from tag
+      # NOTE: This assumes CI runs only on push-tag triggers
+      - name: Extract build tag
         id: upc_version_tag
         run: |
           echo ::set-output name=UPC_VERSION::${GITHUB_REF:10}
+
+      # Android requires this to be an incremental number
+      # TODO
+      # - name: Extract build code
+      #   id: upc_version_code
+      #   run: |
+      #     sh scripts/version.sh
+
+      # the `.bak` is a OSX-specific fix, but output is unused
+      - name: Update gradle version
+        run: sed -i '.bak' "s/versionName ./versionName ${{ steps.upc_version_tag.outputs.UPC_VERSION }}/g" ./app/build.gradle
 
       - name: Build Android release
         # You may pin to the exact commit or the version.
