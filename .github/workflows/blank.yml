@@ -2,16 +2,20 @@
 
 name: CI
 
-# Controls when the action will run. 
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    tags:
+      - "*"
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+# Controls when the action will run.
+# on:
+#   # Triggers the workflow on push or pull request events but only for the main branch
+#   push:
+#     branches: [main]
+#   pull_request:
+#     branches: [main]
+#   # Allows you to run this workflow manually from the Actions tab
+#   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -34,3 +38,64 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
+
+      # NOTE: This assumes CI runs only on push-tag triggers
+      - name: Extract build tag
+        id: upc_version_tag
+        run: |
+          echo ::set-output name=UPC_VERSION::${GITHUB_REF:10}
+
+      # Android requires this to be an incremental number
+      # TODO
+      # - name: Extract build code
+      #   id: upc_version_code
+      #   run: |
+      #     sh scripts/version.sh
+
+      # Note: add '.bak' after -i for OSX-specific fix
+      - name: Update gradle version
+        run: sed -i "s/versionName .*/versionName \"${{ steps.upc_version_tag.outputs.UPC_VERSION }}\"/g" app/build.gradle
+
+      - name: Build Android release
+        # You may pin to the exact commit or the version.
+        # uses: sparkfabrik/android-build-action@02e36921259edb617c8395c1432b3164b3257e8e
+        uses: sparkfabrik/android-build-action@v1.0.0
+        with:
+          # Project path
+          project-path: ./ # default root, where gradlew file is
+          # Output path of apk
+          output-path: # optional, default is app/build/outputs/apk/release/app-release-unsigned.apk
+          # Name of the gradle task to exec
+          gradle-task: assembleRelease # optional, default is assembleDebug
+          # Boolean to tell the Action to upload the .ipa to Browserstack App Live after the build.
+          browserstack-upload: # optional
+          # Browserstack username (required if browserstack-upload == true)
+          browserstack-username: # optional, default is
+          # Browserstack access key (required if browserstack-upload == true)
+          browserstack-access-key: # optional, default is
+
+      - name: Sign Android release
+        # You may pin to the exact commit or the version.
+        # uses: r0adkll/sign-android-release@f89394986064da3bdb260e4c7b8739c664fe8150
+        uses: r0adkll/sign-android-release@v1
+        with:
+          # The directory to find your release to sign
+          releaseDirectory: app/build/outputs/apk/release
+          # The key used to sign your release in base64 encoded format
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          # The key alias
+          alias: ${{ secrets.ALIAS }}
+          # The password to the keystore
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          # The password for the key
+          keyPassword: ${{ secrets.KEY_PASSWORD }} # optional
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: app/build/outputs/apk/release/app-release-unsigned-signed.apk
+          asset_name: release-${{ steps.upc_version_tag.outputs.UPC_VERSION }}.apk
+          tag: ${{ steps.upc_version_tag.outputs.UPC_VERSION }}
+          overwrite: true
+          body: # static text only
